@@ -1,0 +1,74 @@
+selectadr           DSIN      $00
+selectadr_id        EQU       $00
+selectadr_r         EQU       s0
+
+
+adrout              DSOUT     $01
+adrout_id           EQU       $01
+adrout_r            EQU       s1
+
+
+readfram            DSIN      $02
+readfram_id         EQU       $02
+readfram_r          EQU       s2
+
+
+send                DSOUT     $03
+send_id             EQU       $03
+send_r              EQU       s3
+
+
+counter_r           EQU       s4
+
+
+
+main: 
+
+                    IN        selectadr_r, selectadr_id
+                    COMP      selectadr_r, $40
+                    JUMP      Z, stop
+                    LOAD      adrout_r, selectadr_r
+                    OUT       adrout_r, adrout_id
+                    IN        readfram_r, readfram_id
+                    JUMP      do
+
+nextadr:            ADD       adrout_r, $01
+                    COMP      adrout_r, $40
+
+                    JUMP      Z, stop
+                    OUT       adrout_r, adrout_id
+                    IN        readfram_r, readfram_id
+                    JUMP      do
+
+
+
+
+
+
+
+                    LOAD      counter_r, $00
+                    IN        readfram_r, readfram_id
+
+do: 
+
+
+                    LOAD      send_r, $01
+                    ADD       counter_r, $01
+                    AND       send_r, readfram_r
+                    RR        readfram_r
+
+
+                    COMP      counter_r, $08
+                    OUT       send_r, send_id
+
+                    JUMP      NZ, do
+                    JUMP      nextadr
+
+
+
+
+stop:               JUMP      stop
+
+
+
+

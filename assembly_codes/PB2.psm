@@ -1,0 +1,29 @@
+gelen               DSIN      $00
+gelen_id            EQU       $00
+gelen_r             EQU       s0
+
+cikis               DSOUT     $01
+cikis_id            EQU       $01
+cikis_r             EQU       s1
+temp                EQU       s2
+bitcounter          EQU       s3
+basla: 
+                    LOAD      bitcounter, $00
+temel: 
+                    ADD       bitcounter, $01
+                    IN        gelen_r, gelen_id
+                    LOAD      temp, gelen_r
+                    RR        temp
+                    OR        cikis_r, temp
+
+                    OUT       cikis_r, cikis_id
+                    COMP      bitcounter, $08
+                    JUMP      Z, yenidenbasla
+                    SR0       cikis_r
+
+                    JUMP      temel
+yenidenbasla: 
+                    LOAD      bitcounter, $00
+                    LOAD      cikis_r, $00
+                    OUT       cikis_r, cikis_id
+                    JUMP      basla
